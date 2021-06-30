@@ -1,5 +1,5 @@
 import React from 'react';
-import AdminNavigation from './manager';
+import AdminNavigation from './admin';
 import ClientNavigation from './client';
 import {NavigationContainer} from '@react-navigation/native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
