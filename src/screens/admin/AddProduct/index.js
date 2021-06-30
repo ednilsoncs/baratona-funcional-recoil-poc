@@ -2,13 +2,28 @@ import React from 'react';
 import {Appbar} from 'react-native-paper';
 import {View, ScrollView, StyleSheet, Alert} from 'react-native';
 import {Text, TextInput, Button} from 'react-native-paper';
+import {useRecoilState} from 'recoil';
+
+import {productsState} from '../../../recoil/atoms';
 
 const ProductsList = ({navigation}) => {
   const [name, setName] = React.useState('');
-  const [value, setValue] = React.useState('');
-  const [quantity, setQuantity] = React.useState('');
+  const [value, setValue] = React.useState(null);
+  const [quantity, setQuantity] = React.useState(null);
+  const [_, setProducts] = useRecoilState(productsState);
 
   const handleSave = () => {
+    setProducts(oldProducts => {
+      return [
+        ...oldProducts,
+        {
+          id: Math.ceil(Math.random() * (100000 - 1) + 1),
+          name,
+          price: value,
+          quantity,
+        },
+      ];
+    });
     Alert.alert('produto salvo!');
     setName('');
     setValue('');
