@@ -24,7 +24,12 @@ const ProductsList = ({navigation}) => {
         <View style={styles.container}>
           <Text style={styles.title}>Lista de produtos</Text>
           {products?.map(product => (
-            <ProductCard key={product.id} product={product} role="admin" />
+            <ProductCard
+              key={product.id}
+              products={products}
+              product={product}
+              role="admin"
+            />
           ))}
         </View>
       </ScrollView>

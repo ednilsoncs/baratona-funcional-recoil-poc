@@ -1,6 +1,9 @@
 import React from 'react';
 import {StyleSheet, View, Alert} from 'react-native';
 import {Avatar, Card, Text, IconButton} from 'react-native-paper';
+import {useRecoilState} from 'recoil';
+
+import {productsState} from '../recoil/atoms';
 
 const LeftContent = () => (
   <Avatar.Image
@@ -73,12 +76,20 @@ const RightContent = (
   </View>
 );
 
-const ProductCard = ({product, role, mode = 'normal'}) => {
+const ProductCard = ({products, product, role, mode = 'normal'}) => {
+  console.log();
+  const [_, setProducts] = useRecoilState(productsState);
   const handleEditProduct = () => {
     console.log('EDITANDO...');
   };
 
   const handleDeleteProductFromStock = () => {
+    const filteredProducts = products.filter(stockProduct => {
+      return stockProduct.id !== product.id;
+    });
+
+    setProducts(filteredProducts);
+
     Alert.alert('Produto Deletado com sucesso!');
   };
 
