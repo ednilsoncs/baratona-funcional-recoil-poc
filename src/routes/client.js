@@ -8,7 +8,7 @@ const Stack = createStackNavigator();
 const Client = () => {
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
-      <Stack.Screen name="ProductsList" component={ProductsList} />
+      <Stack.Screen name="ClientProductsList" component={ProductsList} />
       <Stack.Screen name="Cart" component={Cart} />
     </Stack.Navigator>
   );
