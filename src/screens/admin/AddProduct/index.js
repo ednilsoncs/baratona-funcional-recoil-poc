@@ -10,7 +10,7 @@ const ProductsList = ({navigation}) => {
   const [name, setName] = React.useState('');
   const [value, setValue] = React.useState(null);
   const [quantity, setQuantity] = React.useState(null);
-  const [_, setProducts] = useRecoilState(productsState);
+  const [, setProducts] = useRecoilState(productsState);
 
   const handleSave = () => {
     setProducts(oldProducts => {
@@ -20,7 +20,7 @@ const ProductsList = ({navigation}) => {
           id: Math.ceil(Math.random() * (100000 - 1) + 1),
           name,
           price: value,
-          quantity,
+          stock: quantity,
         },
       ];
     });

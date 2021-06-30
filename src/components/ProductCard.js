@@ -3,7 +3,7 @@ import {StyleSheet, View, Alert} from 'react-native';
 import {Avatar, Card, Text, IconButton} from 'react-native-paper';
 import {useRecoilState} from 'recoil';
 
-import {productsState} from '../recoil/atoms';
+import {productsState, cartState} from '../recoil/atoms';
 
 const LeftContent = () => (
   <Avatar.Image
@@ -76,13 +76,15 @@ const RightContent = (
   </View>
 );
 
-const ProductCard = ({products, product, role, mode = 'normal'}) => {
-  console.log();
-  const [_, setProducts] = useRecoilState(productsState);
+const ProductCard = ({product, role, mode = 'normal'}) => {
+  const [products, setProducts] = useRecoilState(productsState);
+  const [cart, setCart] = useRecoilState(cartState);
   const handleEditProduct = () => {
     console.log('EDITANDO...');
   };
-
+  const removeItemAtIndex = (arr, index) => {
+    return [...arr.slice(0, index), ...arr.slice(index + 1)];
+  };
   const handleDeleteProductFromStock = () => {
     const filteredProducts = products.filter(stockProduct => {
       return stockProduct.id !== product.id;
@@ -94,19 +96,103 @@ const ProductCard = ({products, product, role, mode = 'normal'}) => {
   };
 
   const handleAddProductToCart = () => {
-    Alert.alert('Produto Adicionado ao Carrinho!');
+    let productItens = [...products];
+    const findItem = cart.findIndex(item => {
+      product.id === item.id;
+    });
+    const findIndexProduct = products.findIndex(item => {
+      return product.id === item.id;
+    });
+    const quantidtyProduct = Number(products[findIndexProduct].stock) - 1;
+    const itemProduct = {...products[findIndexProduct]};
+
+    itemProduct.stock = quantidtyProduct;
+    if (findItem > 0) {
+      cart[findItem].quantity = cart[findItem].quantity + 1;
+    } else {
+      setCart([...cart, {quantity: 1, ...product}]);
+    }
+
+    productItens[findIndexProduct] = itemProduct;
+
+    setProducts(productItens);
   };
 
   const handleRemoveProductFromCart = () => {
-    Alert.alert('Produto Removido do Carrinho!');
+    let productItens = [...products];
+    const findItem = cart.findIndex(item => {
+      product.id === item.id;
+    });
+    const findIndexProduct = products.findIndex(item => {
+      return product.id === item.id;
+    });
+    const filteredProducts = cart.filter(cartProduct => {
+      return cartProduct.id !== product.id;
+    });
+    const itemProduct = {...products[findIndexProduct]};
+    const quantidtyProduct =
+      Number(products[findIndexProduct].stock) + cart[findItem].quantity;
+    itemProduct.stock = quantidtyProduct;
+    productItens[findIndexProduct] = itemProduct;
+
+    setProducts(productItens);
+    setCart(filteredProducts);
   };
 
   const handleIncreseProduct = () => {
-    console.log('+1 adicionado');
+    let cartItens = [...cart];
+    let productItens = [...products];
+    const findIndex = cart.findIndex(item => {
+      return product.id === item.id;
+    });
+    const findIndexProduct = products.findIndex(item => {
+      return product.id === item.id;
+    });
+
+    if (products[findIndexProduct].stock < 1) {
+      return;
+    }
+    const quantidtyProduct = Number(products[findIndexProduct].stock) - 1;
+    const itemProduct = {...products[findIndexProduct]};
+
+    itemProduct.stock = quantidtyProduct;
+    products[findIndexProduct] = itemProduct;
+    const item = {...cart[findIndex]};
+
+    item.quantity = Number(cart[findIndex].quantity) + 1;
+    productItens[findIndexProduct] = itemProduct;
+    cartItens[findIndex] = item;
+    setProducts(productItens);
+    setCart(cartItens);
   };
 
   const handleDecreaseProduct = () => {
-    console.log('-1 removido');
+    const findIndexCart = cart.findIndex(item => {
+      return product.id === item.id;
+    });
+
+    const findIndexProduct = products.findIndex(item => {
+      return product.id === item.id;
+    });
+
+    let productItens = [...products];
+
+    let cartItens = [...cart];
+    const quantityCart = Number(cartItens[findIndexCart].quantity) - 1;
+    const quantidtyProduct = Number(productItens[findIndexProduct].stock) + 1;
+    if (quantityCart === 0) {
+      cartItens = removeItemAtIndex(cartItens, findIndexCart);
+    } else {
+      const itemCart = {...cartItens[findIndexCart]};
+
+      itemCart.quantity = quantityCart;
+      cartItens[findIndexCart] = itemCart;
+    }
+    const itemProduct = {...productItens[findIndexProduct]};
+    itemProduct.stock = quantidtyProduct;
+    productItens[findIndexProduct] = itemProduct;
+    setProducts(productItens);
+    setCart(cartItens);
   };
 
   return (
@@ -118,7 +204,7 @@ const ProductCard = ({products, product, role, mode = 'normal'}) => {
           RightContent(
             role,
             mode,
-            product.quantity,
+            role === 'admin' ? product.stock : product.quantity,
             handleEditProduct,
             handleDeleteProductFromStock,
             handleAddProductToCart,
