@@ -7,7 +7,7 @@ const Stack = createStackNavigator();
 
 function Admin() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name="AddProduct" component={AddProduct} />
       <Stack.Screen name="ProductsList" component={ProductsList} />
     </Stack.Navigator>
