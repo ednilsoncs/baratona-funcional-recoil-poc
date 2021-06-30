@@ -14,7 +14,7 @@ const ProductsList = ({navigation}) => {
         style={{
           backgroundColor: '#001529',
         }}>
-        <Appbar.Content title="Gerenciamento" />
+        <Appbar.Content title="Produtos" />
         <Appbar.Action
           icon="cart"
           onPress={() => navigation.navigate('Cart')}
